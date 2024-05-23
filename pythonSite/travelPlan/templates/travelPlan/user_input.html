@@ -1,0 +1,44 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>여행지 추천</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <h1>여행지 추천</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="gender">성별을 선택하세요:</label>
+        <select name="gender" id="gender">
+            <option value="남">남성</option>
+            <option value="여">여성</option>
+        </select><br>
+
+        <label for="age">연령대 선택하세요:</label>
+        <input type="number" name="age" id="age" required><br>
+
+        <label>여행 스타일을 선택하세요:</label><br>
+        <label>자연 vs 도시</label>
+        <input type="range" name="travel_style1" min="1" max="7" step="1"><br>
+        <label>숙박 vs 당일치기</label>
+        <input type="range" name="travel_style2" min="1" max="7" step="1"><br>
+        <label>새로운 지역 vs 익숙한 지역</label>
+        <input type="range" name="travel_style3" min="1" max="7" step="1"><br>
+        <label>편하지만 비싼 숙소 vs 불편하지만 싼 숙소</label>
+        <input type="range" name="travel_style4" min="1" max="7" step="1"><br>
+        <label>휴양/휴식 vs 체험활동</label>
+        <input type="range" name="travel_style5" min="1" max="7" step="1"><br>
+        <label>유명하지 않는 방문지 vs 유명한 방문지</label>
+        <input type="range" name="travel_style6" min="1" max="7" step="1"><br>
+        <label>계획 여행 vs 즉흥 여행</label>
+        <input type="range" name="travel_style7" min="1" max="7" step="1"><br>
+        <label>사진 촬영 중요 vs 중요x</label>
+        <input type="range" name="travel_style8" min="1" max="7" step="1"><br>
+
+        <button type="submit">추천받기</button>
+    </form>
+</body>
+</html>

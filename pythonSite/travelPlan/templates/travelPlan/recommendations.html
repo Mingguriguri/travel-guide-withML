@@ -1,0 +1,19 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>추천된 여행지</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <h1>추천된 여행지</h1>
+    <ul>
+        {% for result in results.itertuples %}
+        <li>{{ result.AREA }} - 점수: {{ result.SCORE }}</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'index' %}">처음으로 돌아가기</a>
+</body>
+</html>
