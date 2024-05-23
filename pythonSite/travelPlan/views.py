@@ -1,9 +1,19 @@
-import random
+import os
 import pandas as pd
+import tensorflow as tf
 from django.shortcuts import render
+from django.conf import settings
 
-# 더미 데이터 사용
-dummy_areas = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
+# BASE_DIR을 이용하여 절대 경로 설정
+model_path = os.path.join(settings.BASE_DIR, 'travelPlan/models/my_model.h5')
+data_path = os.path.join(settings.BASE_DIR, 'travelPlan/models/df_filter.csv')
+
+# 모델 로드
+model = tf.keras.models.load_model(model_path)
+
+# 전처리된 데이터셋 로드
+df = pd.read_csv(data_path)
+area_names = df['VISIT_AREA_NM'].unique().tolist()
 
 def index(request):
     return render(request, 'travelPlan/index.html')
@@ -35,11 +45,25 @@ def recommend_destinations(request):
             'TRAVEL_MISSION_INT': 3,
         }
 
-        # 더미 데이터 사용하여 점수 생성
-        results = pd.DataFrame(dummy_areas, columns=['AREA'])
-        results['SCORE'] = [random.uniform(0, 1) for _ in range(len(dummy_areas))]
+        results = pd.DataFrame([], columns=['AREA', 'SCORE'])
+
+        for area in area_names:
+            input_data = list(traveler.values())
+            input_data.append(area)
+
+            # 예측
+            score = predict(model, input_data)
+
+            results = pd.concat([results, pd.DataFrame([[area, score]], columns=['AREA', 'SCORE'])])
+
         results = results.sort_values('SCORE', ascending=False).reset_index(drop=True)
 
         return render(request, 'travelPlan/recommendations.html', {'results': results})
 
     return render(request, 'travelPlan/user_input.html')
+
+# 예측 함수 정의
+def predict(model, input_data):
+    input_tensor = tf.convert_to_tensor([input_data], dtype=tf.float32)
+    prediction = model.predict(input_tensor)
+    return prediction[0][0]
