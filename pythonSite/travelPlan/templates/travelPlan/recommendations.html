@@ -5,15 +5,28 @@
 <head>
     <meta charset="UTF-8">
     <title>추천된 여행지</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/recommendations.css' %}">
 </head>
 <body>
-    <h1>추천된 여행지</h1>
-    <ul>
-        {% for result in results.itertuples %}
-        <li>{{ result.AREA }} - 점수: {{ result.SCORE }}</li>
-        {% endfor %}
-    </ul>
-    <a href="{% url 'index' %}">처음으로 돌아가기</a>
+    <header>
+        <h1>투어스</h1>
+    </header>
+    <div class="container">
+        <h1>추천된 국내 여행지</h1>
+        <div class="results">
+            {% for result in results.itertuples %}
+            <div class="result-card">
+                <img src="{% static 'images/' %}{{ forloop.counter }}.png" alt="순위 이미지">
+                <h3>{{ result.AREA }}</h3>
+                <p>점수: {{ result.SCORE }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        <a href="{% url 'index' %}">처음으로 돌아가기</a>
+    </div>
+    <footer>
+        <p>© 2024 투어스. All rights reserved.</p>
+        <p>GCU - 파이썬 프로그래밍 | 김민정, 박진서 </p>
+    </footer>
 </body>
 </html>
