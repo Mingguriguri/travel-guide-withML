@@ -1,17 +1,18 @@
 import os
 import pandas as pd
-import tensorflow as tf
 from django.shortcuts import render
 from django.conf import settings
+from catboost import CatBoostRegressor
 
-# BASE_DIR을 이용하여 절대 경로 설정
-model_path = os.path.join(settings.BASE_DIR, 'travelPlan/models/my_model.h5')
+# 모델 경로 설정
+model_path = os.path.join(settings.BASE_DIR, 'travelPlan/models/my_model.cbm')
 data_path = os.path.join(settings.BASE_DIR, 'travelPlan/models/df_filter.csv')
 
 # 모델 로드
-model = tf.keras.models.load_model(model_path)
+model = CatBoostRegressor()
+model.load_model(model_path)
 
-# 전처리된 데이터셋 로드
+# 데이터 로드
 df = pd.read_csv(data_path)
 area_names = df['VISIT_AREA_NM'].unique().tolist()
 
@@ -25,9 +26,7 @@ def recommend_destinations(request):
         user_inputs.append(float(request.POST.get('age')))
         for i in range(1, 9):
             user_inputs.append(int(request.POST.get(f'travel_style{i}')))
-        user_inputs.append(8)  # TRAVEL_MOTIVE_1 고정값
-        user_inputs.append(0.0)  # TRAVEL_COMPANIONS_NUM 고정값
-        user_inputs.append(3)  # TRAVEL_MISSION_INT 고정값
+        user_inputs.extend([8, 0.0, 3])
 
         traveler = {
             'GENDER': user_inputs[0],
@@ -51,19 +50,15 @@ def recommend_destinations(request):
             input_data = list(traveler.values())
             input_data.append(area)
 
-            # 예측
-            score = predict(model, input_data)
+            score = model.predict([input_data])[0]
 
             results = pd.concat([results, pd.DataFrame([[area, score]], columns=['AREA', 'SCORE'])])
 
         results = results.sort_values('SCORE', ascending=False).reset_index(drop=True)
 
-        return render(request, 'travelPlan/recommendations.html', {'results': results})
+        # 상위 10개의 결과만 반환 (전체 다 반환하고 싶으면 아래 코드 주석처리 하면 됨)
+        top_10_results = results.head(10)
+
+        return render(request, 'travelPlan/recommendations.html', {'results': top_10_results})
 
     return render(request, 'travelPlan/user_input.html')
-
-# 예측 함수 정의
-def predict(model, input_data):
-    input_tensor = tf.convert_to_tensor([input_data], dtype=tf.float32)
-    prediction = model.predict(input_tensor)
-    return prediction[0][0]
