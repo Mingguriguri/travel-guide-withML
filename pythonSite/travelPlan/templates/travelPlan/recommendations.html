@@ -14,19 +14,19 @@
     <div class="container">
         <h1>추천된 국내 여행지</h1>
         <div class="results">
-            {% for result in results.itertuples %}
+            {% for result in results.itertuples %}  <!-- 결과 목록을 반복하여 각 항목을 표시 -->
             <div class="result-card">
-                <img src="{% static 'images/' %}{{ forloop.counter }}.png" alt="순위 이미지">
-                <h3>{{ result.AREA }}</h3>
-                <p>점수: {{ result.SCORE }}</p>
+                <img src="{% static 'images/' %}{{ forloop.counter }}.png" alt="순위 이미지">  <!-- 순위 이미지 -->
+                <h3>{{ result.AREA }}</h3>  <!-- 방문지 이름 -->
+                <p>점수: {{ result.SCORE }}</p>  <!-- 방문지 점수 -->
             </div>
             {% endfor %}
         </div>
-        <a href="{% url 'index' %}">처음으로 돌아가기</a>
+        <a href="{% url 'index' %}">처음으로 돌아가기</a>  <!-- 처음으로 돌아가기 버튼 -->
     </div>
     <footer>
         <p>© 2024 투어스. All rights reserved.</p>
-        <p>GCU - 파이썬 프로그래밍 | 김민정, 박진서 </p>
+        <p>GCU - 파이썬 프로그래밍 | 김민정, 박진서 </p>  <!-- 프로젝트 정보 -->
     </footer>
 </body>
 </html>

@@ -13,7 +13,7 @@
     </header>
     <div class="container">
         <h1>여행지 추천</h1>
-        <form method="post">
+        <form method="post"> <!-- POST 요청으로 폼 데이터 전송 -->
             {% csrf_token %}
             <label for="gender">성별을 선택하세요:</label>
             <select name="gender" id="gender">
